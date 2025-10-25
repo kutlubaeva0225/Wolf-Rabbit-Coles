@@ -45,11 +45,11 @@ void Map::kill(MapObj* target) {
 	if (target == nullptr) return;
 	for (int i = 0; i < obj_num; ++i) {
 		if (objects[i] == target) {
+			int target_rang = target->get_rang();
 			delete objects[i]; //удалили указатель цели
 			for (int j = i; j < obj_num; ++j) {
 				objects[j] = objects[j + 1]; //сдвинули все последующие указатели в массиве после удаленной цели
 			}
-			int target_rang = target->get_rang();
 			if (target_rang == 2) wolfs--;        // ¬олк
 			else if (target_rang == 1) rabbits--; // «а€ц
 			else if (target_rang == 0) coles--;   //  апуста
