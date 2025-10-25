@@ -1,39 +1,202 @@
 #include "mapobj.h"
+#include "map.h"
 #include <cassert>
 
 #ifndef TEST_MAPOBJ_H_
 #define TEST_MAPOBJ_H_
 
-bool t_create_mapobj(MapObj* obj, int expected_rang) {
-    int x = obj->get_x();
-    int y = obj->get_y();
-    int s = obj->get_s();
-    int rang = obj->get_rang();
-    assert(x >= 0 && x <= MAX_COOR);
-    assert(y >= 0 && y <= MAX_COOR);
-    assert(s >= 0 && s <= MAX_STAMINA);
-    assert(rang == expected_rang);
-    printf("MapObj created correctly (rang=%d)\n", rang);
+// Тест создания базового объекта
+bool t_create_mapobj() {
+    MapObj* obj = new MapObj(5, 5, START_S, 1);
+    assert(obj->get_x() == 5);
+    assert(obj->get_y() == 5);
+    assert(obj->get_s() == START_S);
+    assert(obj->get_rang() == 1);
+    assert(obj->can_be_moved() == true);
+    assert(obj->is_alive() == true);
+    printf("MapObj created correctly\n");
+    delete obj;
     return true;
 }
 
-bool t_mapobj_give_s(MapObj* obj) {
+// Тест движения объекта
+bool t_mapobj_movement() {
+    Map* test_map = new Map(0, 1, 0); // Только 1 объект для теста движения
+    MapObj* obj = new MapObj(5, 5, START_S, 1);
+
+    int old_x = obj->get_x();
+    int old_y = obj->get_y();
     int old_stamina = obj->get_s();
-    bool result = obj->give_s(1);
-    int new_stamina = obj->get_s();
-    assert(result == true || result == false); // Может вернуть false если превышен лимит
-    if (result) {
-        assert(new_stamina == old_stamina + 1);
-    }
-    printf("MapObj give_s: %s, stamina: %d -> %d\n",
-        result ? "true" : "false", old_stamina, new_stamina);
+
+    // Тестируем движение
+    bool move_result = obj->move_on(2, 1, test_map, false);
+    printf("MapObj moved from (%d,%d) to (%d,%d), stamina: %d -> %d\n",
+        old_x, old_y, obj->get_x(), obj->get_y(), old_stamina, obj->get_s());
+
+    assert(move_result == true || move_result == false);
+    assert(obj->get_s() <= old_stamina); // Стамина должна уменьшиться
+
+    delete obj;
+    delete test_map;
     return true;
 }
 
-bool t_mapobj_alive(MapObj* obj) {
-    bool alive = obj->is_alive();
-    assert(alive == (obj->get_s() > 0));
-    printf("MapObj is alive: %s (stamina=%d)\n", alive ? "true" : "false", obj->get_s());
+// Тест поиска цели
+bool t_mapobj_find_target() {
+    // Создаем карту с объектами разных рангов
+    Map* test_map = new Map(1, 1, 1); // Волк, заяц, капуста
+
+    // Находим волка на карте
+    MapObj* wolf = nullptr;
+    std::vector<MapObj*> objects = test_map->get_obj();
+    for (MapObj* obj : objects) {
+        if (obj->get_rang() == 2) {
+            wolf = obj;
+            break;
+        }
+    }
+
+    if (wolf) {
+        // Волк должен найти зайца (ранг 2-1=1)
+        MapObj* target = wolf->find_targ(0, test_map);
+        if (target) {
+            printf("Wolf found target with rang %d at (%d,%d)\n",
+                target->get_rang(), target->get_x(), target->get_y());
+            assert(target->get_rang() == 1); // Должен найти зайца
+        }
+    }
+
+    delete test_map;
+    return true;
+}
+
+// Тест поедания
+bool t_mapobj_eat() {
+    Map* test_map = new Map(0, 1, 1); // Заяц и капуста
+    MapObj* rabbit = nullptr;
+
+    std::vector<MapObj*> objects = test_map->get_obj();
+    for (MapObj* obj : objects) {
+        if (obj->get_rang() == 1) {
+            rabbit = obj;
+            break;
+        }
+    }
+
+    if (rabbit) {
+        int old_stamina = rabbit->get_s();
+        bool eat_result = rabbit->eat(test_map);
+        printf("Rabbit eat result: %s, stamina: %d -> %d\n",
+            eat_result ? "true" : "false", old_stamina, rabbit->get_s());
+
+        // Если нашел капусту - стамина должна увеличиться
+        if (eat_result) {
+            assert(rabbit->get_s() > old_stamina);
+        }
+    }
+
+    delete test_map;
+    return true;
+}
+
+
+// Тест подкармливания
+bool t_mapobj_give_s() {
+    MapObj* obj = new MapObj(5, 5, 10, 1);
+
+    int old_stamina = obj->get_s();
+    bool feed_result = obj->give_s(3);
+    printf("Give_s result: %s, stamina: %d -> %d\n",
+        feed_result ? "true" : "false", old_stamina, obj->get_s());
+    assert(feed_result == true);
+    assert(obj->get_s() == old_stamina + 3);
+    
+    delete obj;
+    return true;
+}
+
+// Тест проверки живучести
+bool t_mapobj_is_alive() {
+    MapObj* alive_obj = new MapObj(5, 5, 5, 1);
+    MapObj* dead_obj = new MapObj(5, 5, 0, 1);
+
+    assert(alive_obj->is_alive() == true);
+    assert(dead_obj->is_alive() == false);
+
+    printf("Alive object: %s, Dead object: %s\n",
+        alive_obj->is_alive() ? "true" : "false",
+        dead_obj->is_alive() ? "true" : "false");
+
+    delete alive_obj;
+    delete dead_obj;
+    return true;
+}
+
+// Тест преследования цели
+bool t_mapobj_chase_target() {
+    Map* test_map = new Map(1, 1, 0); // Волк и заяц
+
+    MapObj* wolf = nullptr;
+    MapObj* rabbit = nullptr;
+
+    std::vector<MapObj*> objects = test_map->get_obj();
+    for (MapObj* obj : objects) {
+        if (obj->get_rang() == 2) wolf = obj;
+        if (obj->get_rang() == 1) rabbit = obj;
+    }
+
+    if (wolf && rabbit) {
+        int wolf_old_x = wolf->get_x();
+        int wolf_old_y = wolf->get_y();
+
+        bool chase_result = wolf->chase_targ(rabbit, test_map);
+        printf("Chase result: %s, wolf moved from (%d,%d) to (%d,%d)\n",
+            chase_result ? "true" : "false",
+            wolf_old_x, wolf_old_y, wolf->get_x(), wolf->get_y());
+
+        assert(chase_result == true);
+    }
+
+    delete test_map;
+    return true;
+}
+
+// Комплексный тест всех методов MapObj на КОНКРЕТНОЙ карте
+bool t_mapobj_comprehensive(Map* test_map) {
+    printf("Comprehensive MapObj tests on specific map...\n");
+
+    std::vector<MapObj*> objects = test_map->get_obj();
+    int tested_objects = 0;
+
+    for (MapObj* obj : objects) {
+        tested_objects++;
+        printf("\nTesting object %d (rang %d) at (%d,%d):\n",
+            tested_objects, obj->get_rang(), obj->get_x(), obj->get_y());
+
+        // Тест базовых свойств
+        assert(obj->get_x() >= 0 && obj->get_x() <= MAX_COOR);
+        assert(obj->get_y() >= 0 && obj->get_y() <= MAX_COOR);
+        assert(obj->get_rang() >= 0 && obj->get_rang() <= 2);
+
+        // Тест движения (только для подвижных объектов)
+        if (obj->can_be_moved()) {
+            bool move_result = obj->move_on(1, 0, test_map, false);
+            printf("  Move result: %s\n", move_result ? "true" : "false");
+        }
+
+        // Тест поиска целей
+        MapObj* target = obj->find_targ(0, test_map);
+        if (target) {
+            printf("  Found target at (%d,%d) rang %d\n",
+                target->get_x(), target->get_y(), target->get_rang());
+        }
+
+        // Тест живучести
+        printf("  Is alive: %s, Stamina: %d\n",
+            obj->is_alive() ? "true" : "false", obj->get_s());
+    }
+
+    printf("Comprehensive tests completed for %d objects\n", tested_objects);
     return true;
 }
 

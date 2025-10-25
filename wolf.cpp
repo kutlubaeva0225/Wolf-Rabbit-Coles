@@ -1,13 +1,25 @@
-#include "test_w.h"
+#include <cstdlib>
+#include <ctime>  
+#include <cstdio>
+#include "mapobj.h"
+#include "wolf.h"
 
-int main() {
-	Wolf w1 = Wolf(-1, -1, -100, 2.0);
-	if (t_create(&w1)) printf("Wolf created correctly\n");
-	w1.move_on(100, -100);
-	if (t_move_on(&w1)) printf("Wolf moved correctly\n");
-	bool a = w1.give_s(100); //временная пременная, нуждые только для тестов
-	if (t_give_stamina(&w1)) printf("You gave stamina correctly\n");
-	w1.update_agg();
-	if (t_update_agg(&w1)) printf("Agger was uppdated correctly");
-	return 0;
+Wolf::Wolf(int x, int y, int start_s, int rang, double s_agger) : MapObj(x, y, start_s, 2), agger(s_agger) {
+	if (agger < 0) agger = 0;
+	if (agger > 1) agger = 1;
+}
+
+void Wolf::update_agg() {
+	double new_agg = (double)rand() / RAND_MAX;
+	agger = new_agg;
+}
+double Wolf::get_ag() const {
+	return agger;
+}
+
+bool Wolf::wanna_eat(Map* map) { //едим только, если достаточно голодные 
+	if (agger > CRIT_AGG) {
+		return eat(map);
+	}
+	else return false;
 }

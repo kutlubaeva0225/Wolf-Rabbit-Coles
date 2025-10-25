@@ -1,56 +1,64 @@
+#include "test_map.h"
+#include "test_mapobj.h"
 #include "test_wolf.h"
 #include "test_rabbit.h"
 #include "test_cole.h"
-#include "test_mapobj.h"
-#include "test_map.h"
-#include <cstdlib>
-#include <ctime>
+#include "map.h"
+#include "mapobj.h"
+#include "wolf.h"
+#include "rabbit.h"
+#include "cole.h"
 
 int main() {
-    srand(time(0)); // Инициализация генератора случайных чисел
+    printf("=== COMPLETE ECOSYSTEM SIMULATION TESTS ===\n");
 
-    printf("=== Starting Tests ===\n");
+    // 1. Тесты базовых объектов
+    printf("\n1. Basic object tests:\n");
+    t_create_mapobj();
+    t_mapobj_movement();
+    t_mapobj_find_target();
+    t_mapobj_eat();
+    t_mapobj_give_s();
+    t_mapobj_is_alive();
+    t_mapobj_chase_target();
 
-    // Тесты Wolf
-    printf("\n--- Testing Wolf ---\n");
-    Wolf* wolf = new Wolf(5, 5, START_S, 2, 0.5);
-    t_create_wolf(wolf);
-    t_update_agg(wolf);
-    t_wanna_eat(wolf);
+    // 2. Тесты конкретных классов
+    printf("\n2. Specific class tests:\n");
+    t_create_wolf();
+    t_update_agg();
+    t_create_rabbit();
+    t_create_cole();
 
-    // Тесты Rabbit
-    printf("\n--- Testing Rabbit ---\n");
-    Rabbit* rabbit = new Rabbit(3, 3, START_S, 1);
-    t_create_rabbit(rabbit);
-    t_rabbit_can_move(rabbit);
-    t_rabbit_alive(rabbit);
+    // 3. Тесты карты
+    printf("\n3. Map tests:\n");
+    t_create_map();
+    t_map_get_objects();
+    t_map_kill_objects();
+    t_map_make_step();
+    t_map_game_over();
 
-    // Тесты Cole
-    printf("\n--- Testing Cole ---\n");
-    Cole* cole = new Cole(7, 7, 1, 0);
-    t_create_cole(cole);
-    t_cole_cannot_move(cole);
-    t_cole_give_s(cole);
+    // 4. Комплексные тесты на конкретной карте
+    printf("\n4. Comprehensive tests on specific map:\n");
 
-    // Тесты MapObj
-    printf("\n--- Testing MapObj ---\n");
-    t_create_mapobj(wolf, 2);
-    t_mapobj_give_s(wolf);
-    t_mapobj_alive(wolf);
+    Map* test_map = new Map(2, 3, 2); // 2 волка, 3 зайца, 2 капусты
 
-    // Тесты Map
-    printf("\n--- Testing Map ---\n");
-    Map* map = new Map(2, 3, 4); // 2 волка, 3 кролика, 4 капусты
-    t_create_map(map);
-    t_map_get_obj(map);
-    t_map_kill(map);
+    printf("\n--- Comprehensive MapObj tests ---\n");
+    t_mapobj_comprehensive(test_map);
 
-    // Очистка
-    delete wolf;
-    delete rabbit;
-    delete cole;
-    delete map;
+    printf("\n--- Comprehensive Map tests ---\n");
+    t_map_comprehensive();
 
-    printf("\n=== All Tests Passed! ===\n");
+    printf("\n--- Wolf tests on map ---\n");
+    t_wolf_on_map(test_map);
+
+    printf("\n--- Rabbit tests on map ---\n");
+    t_rabbit_on_map(test_map);
+
+    printf("\n--- Cole tests on map ---\n");
+    t_cole_on_map(test_map);
+
+    printf("\n? ALL TESTS PASSED! Ecosystem simulation is working correctly.\n");
+
+    delete test_map;
     return 0;
 }

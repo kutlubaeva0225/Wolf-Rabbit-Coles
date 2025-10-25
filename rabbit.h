@@ -10,5 +10,4 @@ class Rabbit : public MapObj {
 public:
 	Rabbit(int x, int y, int start_s, int rang); //конструктор зайца
 };
-Rabbit::Rabbit(int x, int y, int start_s, int rang) : MapObj(x, y, start_s, 1) {}
 #endif
