@@ -47,9 +47,11 @@ void Map::kill(MapObj* target) {
 		if (objects[i] == target) {
 			int target_rang = target->get_rang();
 			delete objects[i]; //удалили указатель цели
-			for (int j = i; j < obj_num; ++j) {
+			objects[i] = nullptr;
+			for (int j = i; j < obj_num - 1; ++j) {
 				objects[j] = objects[j + 1]; //сдвинули все последующие указатели в массиве после удаленной цели
 			}
+			objects[obj_num - 1] = nullptr;
 			if (target_rang == 2) wolfs--;        // Волк
 			else if (target_rang == 1) rabbits--; // Заяц
 			else if (target_rang == 0) coles--;   // Капуста
@@ -63,18 +65,43 @@ std::vector<MapObj*> Map::get_obj() const {
 }
 
 void Map::make_step() {
-	for (int i = 0; i < obj_num; i++) {
-		MapObj* obj = objects[i];
+	std::vector<MapObj*> snapshot = get_obj();
+
+	for (MapObj* obj : snapshot) {
+
+		// Проверка что объект еще жив
+		bool alive = false;
+		for (int i = 0; i < obj_num; i++) {
+			if (objects[i] == obj) {
+				alive = true;
+				break;
+			}
+		}
+		if (!alive) continue;
+
 		if (obj->can_be_moved()) {
-			bool s1 = obj->move_on(rand() % MAX_SHIFT, rand() % MAX_SHIFT, this, false);
-			bool s2 = obj->eat(this);
+			obj->move_on(rand() % MAX_SHIFT, rand() % MAX_SHIFT, this, false);
+
+			// ПОСЛЕ move_on объект МОРАЛЬНО МОЖЕТ БЫТЬ УБИТ
+			alive = false;
+			for (int i = 0; i < obj_num; i++) {
+				if (objects[i] == obj) {
+					alive = true;
+					break;
+				}
+			}
+			if (!alive) continue;
+
+			obj->eat(this);
 		}
 		else {
-			bool s2 = obj->give_s(1);
+			obj->give_s(1);
 		}
 	}
+
 	curr_time++;
 }
+
 
 bool Map::if_game_over() {
 	if (wolfs <= 0 && rabbits <= 0) {

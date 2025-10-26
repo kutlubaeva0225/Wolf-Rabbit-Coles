@@ -28,6 +28,7 @@ int main() {
     t_update_agg();
     t_create_rabbit();
     t_create_cole();
+    t_map_game_over();
 
     // 3. Тесты карты
     printf("\n3. Map tests:\n");
@@ -35,7 +36,6 @@ int main() {
     t_map_get_objects();
     t_map_kill_objects();
     t_map_make_step();
-    t_map_game_over();
 
     // 4. Комплексные тесты на конкретной карте
     printf("\n4. Comprehensive tests on specific map:\n");
@@ -57,7 +57,7 @@ int main() {
     printf("\n--- Cole tests on map ---\n");
     t_cole_on_map(test_map);
 
-    printf("\n? ALL TESTS PASSED! Ecosystem simulation is working correctly.\n");
+    printf("\n! ALL TESTS PASSED! Ecosystem simulation is working correctly.\n");
 
     delete test_map;
     return 0;

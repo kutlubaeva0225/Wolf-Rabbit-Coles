@@ -6,7 +6,7 @@
 
 // Тест создания карты
 bool t_create_map() {
-    Map* test_map = new Map(2, 3, 2); // 2 волка, 3 зайца, 2 капусты
+    Map* test_map = new Map(1, 2, 1); // 2 волка, 3 зайца, 2 капусты
 
     assert(test_map != nullptr);
     printf("Map created successfully\n");
@@ -39,8 +39,7 @@ bool t_map_get_objects() {
         else if (obj->get_rang() == 0) cole_count++;
     }
 
-    printf("Objects on map: %d wolves, %d rabbits, %d coles\n",
-        wolf_count, rabbit_count, cole_count);
+    printf("Objects on map: %d wolves, %d rabbits, %d coles\n", wolf_count, rabbit_count, cole_count);
     assert(wolf_count == 1);
     assert(rabbit_count == 2);
     assert(cole_count == 1);
@@ -75,7 +74,7 @@ bool t_map_kill_objects() {
     assert(objects_after_kill.size() == 2);
 
     printf("Object killed successfully. Remaining objects: %zu\n", objects_after_kill.size());
-
+    test_map->print();
     delete test_map;
     return true;
 }
@@ -87,7 +86,16 @@ bool t_map_make_step() {
     printf("Before step:\n");
     test_map->print();
 
+    // Проверяем объекты перед шагом
+    std::vector<MapObj*> objects = test_map->get_obj();
+    printf("Objects before step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d)\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y());
+    }
+
     // Выполняем шаг
+    printf("Executing step...\n");
     test_map->make_step();
 
     printf("After step:\n");
@@ -150,9 +158,9 @@ bool t_map_comprehensive() {
         test_map->print();
 
         // Проверяем, что игра не закончилась раньше времени
-        //if (i < 4) {
-          //  assert(test_map->if_game_over() == false);
-        //}
+        if (i < 4) {
+            assert(test_map->if_game_over() == false);
+        }
     }
 
     // Тест 3: Уничтожаем несколько объектов
