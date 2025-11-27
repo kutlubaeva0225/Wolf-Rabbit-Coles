@@ -5,6 +5,7 @@
 #include "mapobj.h"
 #include "map.h"
 
+
 MapObj::MapObj(int s_x, int s_y, int s, int r) : x(s_x), y(s_y), stamina(s), rang(r) {
 	if (s_x > MAX_COOR) x = MAX_COOR;
 	if (s_x < 0) x = 0;
@@ -109,7 +110,7 @@ bool MapObj::move_on(int dx, int dy, Map* m, bool nskip_chase = true) { //dx, dy
 	if (dx < -MAX_SHIFT) dx = -MAX_SHIFT;
 	if (dy < -MAX_SHIFT) dy = -MAX_SHIFT;
 
-	if (nskip_chase && find_targ(0, m) != nullptr) { //если заяц по близости есть, будем его преследовать
+	if (!nskip_chase && find_targ(0, m) != nullptr) { //если заяц по близости есть, будем его преследовать
 		return chase_targ(find_targ(0, m), m);
 	}
 
@@ -134,3 +135,35 @@ bool MapObj::move_on(int dx, int dy, Map* m, bool nskip_chase = true) { //dx, dy
 	y = new_y;
 	return true;
 }
+
+
+//перевод с Си
+
+extern "C" {
+	int get_s(MapObj* obj) {
+		return obj->get_s();
+	}
+	int give_s(MapObj* obj, int ds) {
+		if (ds + obj->get_s() > MAX_STAMINA || ds + obj->get_s() < 0) {
+			return 1; //ошибка
+		}
+		else {
+			obj->give_s(ds);
+			return 0; //успех 
+		}
+	}
+	int move_on(MapObj* obj, int dx, int dy, Map* m, int skip) { //dx, dy предлагаемые параметры перемещения // skip == 1 - ловить, skip == 0 - не ловить
+		if (skip == 1) {
+			obj->move_on(dx, dy, m, true); //неловим
+			return 0;
+		}
+		else if (skip == 0) {
+			obj->move_on(dx, dy, m, false);
+			return 0;
+		}
+		else return 1;
+	}
+}
+
+
+

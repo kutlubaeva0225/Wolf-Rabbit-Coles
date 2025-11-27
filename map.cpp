@@ -8,6 +8,7 @@
 #include "cole.h"
 
 
+
 Map::Map(int w, int r, int c) : wolfs(w), rabbits(r), coles(c), obj_num(0), curr_time(0) {
 	if (w < 0 || w > MAX_N_OBJ / 3) w = MAX_N_OBJ / 6;
 	if (r < 0 || r > MAX_N_OBJ / 3) r = MAX_N_OBJ / 6;
@@ -117,4 +118,23 @@ bool Map::if_game_over() {
 		return true;
 	}
 	else return false;
+}
+
+extern "C" {
+	Map* create_map(int w, int r, int c) {
+		return new Map(w, r, c);
+	}
+	void del_map(Map* m) {
+		if (m == nullptr) return;
+		m->~Map();
+	}
+	void m_print(Map* m) {
+		if (m == nullptr) return;
+		m->print();
+	}
+	int make_step(Map* m) {
+		if (m == nullptr) return 1;
+		m->make_step();
+		return 0;
+	}
 }
