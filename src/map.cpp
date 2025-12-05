@@ -16,7 +16,7 @@ Map::Map(int w, int r, int c) : wolfs(w), rabbits(r), coles(c), obj_num(0), curr
 	if (r < 0 || r > MAX_N_OBJ / 3) r = MAX_N_OBJ / 6;
 	if (c < 0 || c > MAX_N_OBJ / 3) c = MAX_N_OBJ / 6;
 	int total_n_obj = w + r + c;
-	objects = new MapObj*[total_n_obj]; //место для указателей объктов карты
+	objects = new MapObj*[total_n_obj]; //Г¬ГҐГ±ГІГ® Г¤Г«Гї ГіГЄГ Г§Г ГІГҐГ«ГҐГ© Г®ГЎГєГЄГІГ®Гў ГЄГ Г°ГІГ»
 	for (int i = 0; i < wolfs; ++i) {
 		objects[obj_num] = new Wolf(rand() % MAX_COOR, rand() % MAX_COOR, START_S, 2, (double)rand() / RAND_MAX);
 		obj_num++;
@@ -32,9 +32,9 @@ Map::Map(int w, int r, int c) : wolfs(w), rabbits(r), coles(c), obj_num(0), curr
 }
 Map::~Map() {
 	for (int i = 0; i < obj_num; i++) {
-		delete objects[i];  // удаляем каждый указатель
+		delete objects[i];  // ГіГ¤Г Г«ГїГҐГ¬ ГЄГ Г¦Г¤Г»Г© ГіГЄГ Г§Г ГІГҐГ«Гј
 	}
-	delete[] objects;       // удаляем массив указателей
+	delete[] objects;       // ГіГ¤Г Г«ГїГҐГ¬ Г¬Г Г±Г±ГЁГў ГіГЄГ Г§Г ГІГҐГ«ГҐГ©
 }
 
 
@@ -49,34 +49,34 @@ void Map::kill(MapObj* target) {
 	for (int i = 0; i < obj_num; ++i) {
 		if (objects[i] == target) {
 			int target_rang = target->get_rang();
-			delete objects[i]; //удалили указатель цели
+			delete objects[i]; //ГіГ¤Г Г«ГЁГ«ГЁ ГіГЄГ Г§Г ГІГҐГ«Гј Г¶ГҐГ«ГЁ
 			objects[i] = nullptr;
 			for (int j = i; j < obj_num - 1; ++j) {
-				objects[j] = objects[j + 1]; //сдвинули все последующие указатели в массиве после удаленной цели
+				objects[j] = objects[j + 1]; //Г±Г¤ГўГЁГ­ГіГ«ГЁ ГўГ±ГҐ ГЇГ®Г±Г«ГҐГ¤ГіГѕГ№ГЁГҐ ГіГЄГ Г§Г ГІГҐГ«ГЁ Гў Г¬Г Г±Г±ГЁГўГҐ ГЇГ®Г±Г«ГҐ ГіГ¤Г Г«ГҐГ­Г­Г®Г© Г¶ГҐГ«ГЁ
 			}
 			objects[obj_num - 1] = nullptr;
-			if (target_rang == 2) wolfs--;        // Волк
-			else if (target_rang == 1) rabbits--; // Заяц
-			else if (target_rang == 0) coles--;   // Капуста
+			if (target_rang == 2) wolfs--;        // Г‚Г®Г«ГЄ
+			else if (target_rang == 1) rabbits--; // Г‡Г ГїГ¶
+			else if (target_rang == 0) coles--;   // ГЉГ ГЇГіГ±ГІГ 
 			obj_num--;
 			return;
 		}
 	}
 }
 std::vector<MapObj*> Map::get_obj() const {
-	return std::vector<MapObj*>(objects, objects + obj_num); //первыый элемент ... последний 
+	return std::vector<MapObj*>(objects, objects + obj_num); //ГЇГҐГ°ГўГ»Г»Г© ГЅГ«ГҐГ¬ГҐГ­ГІ ... ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© 
 }
 
 
 
 void Map::make_step() {
-	// 1. Делаем снимок всех, кто был жив в начале хода
+	// 1. Г„ГҐГ«Г ГҐГ¬ Г±Г­ГЁГ¬Г®ГЄ ГўГ±ГҐГµ, ГЄГІГ® ГЎГ»Г« Г¦ГЁГў Гў Г­Г Г·Г Г«ГҐ ГµГ®Г¤Г 
 	std::vector<MapObj*> snapshot = get_obj();
 
 	for (MapObj* obj : snapshot) {
-		// --- ЗАЩИТА ОТ ЗОМБИ ---
-		// Проверяем, существует ли этот указатель в реальном массиве прямо сейчас.
-		// Если его съели пару миллисекунд назад, его там уже не будет.
+		// --- Г‡ГЂГ™Г€Г’ГЂ ГЋГ’ Г‡ГЋГЊГЃГ€ ---
+		// ГЏГ°Г®ГўГҐГ°ГїГҐГ¬, Г±ГіГ№ГҐГ±ГІГўГіГҐГІ Г«ГЁ ГЅГІГ®ГІ ГіГЄГ Г§Г ГІГҐГ«Гј Гў Г°ГҐГ Г«ГјГ­Г®Г¬ Г¬Г Г±Г±ГЁГўГҐ ГЇГ°ГїГ¬Г® Г±ГҐГ©Г·Г Г±.
+		// Г…Г±Г«ГЁ ГҐГЈГ® Г±ГєГҐГ«ГЁ ГЇГ Г°Гі Г¬ГЁГ«Г«ГЁГ±ГҐГЄГіГ­Г¤ Г­Г Г§Г Г¤, ГҐГЈГ® ГІГ Г¬ ГіГ¦ГҐ Г­ГҐ ГЎГіГ¤ГҐГІ.
 
 		bool is_alive_now = false;
 		for (int i = 0; i < obj_num; i++) {
@@ -86,17 +86,17 @@ void Map::make_step() {
 			}
 		}
 
-		// Если объекта нет в списке живых — пропускаем его
+		// Г…Г±Г«ГЁ Г®ГЎГєГҐГЄГІГ  Г­ГҐГІ Гў Г±ГЇГЁГ±ГЄГҐ Г¦ГЁГўГ»Гµ вЂ” ГЇГ°Г®ГЇГіГ±ГЄГ ГҐГ¬ ГҐГЈГ®
 		if (!is_alive_now) continue;
 		// -----------------------
 
 		if (obj->can_be_moved()) {
-			// Двигаем
+			// Г„ГўГЁГЈГ ГҐГ¬
 			obj->move_on(rand() % MAX_SHIFT, rand() % MAX_SHIFT, this, false);
 
-			// --- ПРОВЕРКА 2: Не умер ли он во время движения (от голода)? ---
-			// Если он умер внутри move_on, его указатель уже невалиден,
-			// но нам и не нужно ничего делать, кроме как не вызывать eat.
+			// --- ГЏГђГЋГ‚Г…ГђГЉГЂ 2: ГЌГҐ ГіГ¬ГҐГ° Г«ГЁ Г®Г­ ГўГ® ГўГ°ГҐГ¬Гї Г¤ГўГЁГ¦ГҐГ­ГЁГї (Г®ГІ ГЈГ®Г«Г®Г¤Г )? ---
+			// Г…Г±Г«ГЁ Г®Г­ ГіГ¬ГҐГ° ГўГ­ГіГІГ°ГЁ move_on, ГҐГЈГ® ГіГЄГ Г§Г ГІГҐГ«Гј ГіГ¦ГҐ Г­ГҐГўГ Г«ГЁГ¤ГҐГ­,
+			// Г­Г® Г­Г Г¬ ГЁ Г­ГҐ Г­ГіГ¦Г­Г® Г­ГЁГ·ГҐГЈГ® Г¤ГҐГ«Г ГІГј, ГЄГ°Г®Г¬ГҐ ГЄГ ГЄ Г­ГҐ ГўГ»Г§Г»ГўГ ГІГј eat.
 
 			bool survived_move = false;
 			for (int i = 0; i < obj_num; i++) {
@@ -107,11 +107,11 @@ void Map::make_step() {
 			}
 			if (!survived_move) continue;
 
-			// Едим (если выжил)
+			// Г…Г¤ГЁГ¬ (ГҐГ±Г«ГЁ ГўГ»Г¦ГЁГ«)
 			obj->eat(this);
 		}
 		else {
-			obj->give_s(1); // Восстанавливаем силы, если стоит
+			obj->give_s(1); // Г‚Г®Г±Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г±ГЁГ«Г», ГҐГ±Г«ГЁ Г±ГІГ®ГЁГІ
 		}
 	}
 
@@ -164,18 +164,18 @@ extern "C" {
 		else return 1;
 	}
 
-	// Новая функция: заполняет массив данными о всех живых объектах
-	// buffer - массив, который подготовит Python
-	// max_size - максимальный размер массива
-	// Возвращает реальное количество объектов
+	// ГЌГ®ГўГ Гї ГґГіГ­ГЄГ¶ГЁГї: Г§Г ГЇГ®Г«Г­ГїГҐГІ Г¬Г Г±Г±ГЁГў Г¤Г Г­Г­Г»Г¬ГЁ Г® ГўГ±ГҐГµ Г¦ГЁГўГ»Гµ Г®ГЎГєГҐГЄГІГ Гµ
+	// buffer - Г¬Г Г±Г±ГЁГў, ГЄГ®ГІГ®Г°Г»Г© ГЇГ®Г¤ГЈГ®ГІГ®ГўГЁГІ Python
+	// max_size - Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г»Г© Г°Г Г§Г¬ГҐГ° Г¬Г Г±Г±ГЁГўГ 
+	// Г‚Г®Г§ГўГ°Г Г№Г ГҐГІ Г°ГҐГ Г«ГјГ­Г®ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г®ГЎГєГҐГЄГІГ®Гў
 	int get_snapshot(Map* m, ExportData* buffer, int max_size) {
 		if (m == nullptr) return 0;
 
-		std::vector<MapObj*> objs = m->get_obj(); // Получаем вектор
+		std::vector<MapObj*> objs = m->get_obj(); // ГЏГ®Г«ГіГ·Г ГҐГ¬ ГўГҐГЄГІГ®Г°
 		int count = 0;
 
 		for (MapObj* obj : objs) {
-			if (count >= max_size) break; // Защита от переполнения
+			if (count >= max_size) break; // Г‡Г Г№ГЁГІГ  Г®ГІ ГЇГҐГ°ГҐГЇГ®Г«Г­ГҐГ­ГЁГї
 
 			buffer[count].obj_ptr = obj;
 			buffer[count].type = obj->get_rang(); 
