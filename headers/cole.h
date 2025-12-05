@@ -9,7 +9,7 @@
 
 class Cole : public MapObj {
 public:
-	Cole(int x, int y, int start_s, int rang); //конструктор зайца
+	Cole(int x, int y, int start_s, int rang); //ГЄГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г§Г Г©Г¶Г 
 	bool can_be_moved() const;
 	bool give_s(int ds);
 };
