@@ -5,7 +5,7 @@
 #ifndef TEST_WOLF_H_
 #define TEST_WOLF_H_
 
-// Тест создания волка 
+// Г’ГҐГ±ГІ Г±Г®Г§Г¤Г Г­ГЁГї ГўГ®Г«ГЄГ  
 bool t_create_wolf() {
     Wolf* wolf = new Wolf(5, 5, START_S, 2, 0.5);
     assert(wolf->get_x() == 5);
@@ -18,7 +18,7 @@ bool t_create_wolf() {
     return true;
 }
 
-// Тест обновления агрессии 
+// Г’ГҐГ±ГІ Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї Г ГЈГ°ГҐГ±Г±ГЁГЁ 
 bool t_update_agg() {
     Wolf* wolf = new Wolf(5, 5, START_S, 2, 0.5);
     double old_agg = wolf->get_ag();
@@ -30,11 +30,11 @@ bool t_update_agg() {
     return true;
 }
 
-// Тест поведения волка на КОНКРЕТНОЙ карте
+// Г’ГҐГ±ГІ ГЇГ®ГўГҐГ¤ГҐГ­ГЁГї ГўГ®Г«ГЄГ  Г­Г  ГЉГЋГЌГЉГђГ…Г’ГЌГЋГ‰ ГЄГ Г°ГІГҐ
 bool t_wolf_on_map(Map* test_map) {
     printf("Testing wolf behavior on specific map...\n");
 
-    // Находим волков на карте
+    // ГЌГ ГµГ®Г¤ГЁГ¬ ГўГ®Г«ГЄГ®Гў Г­Г  ГЄГ Г°ГІГҐ
     std::vector<MapObj*> objects = test_map->get_obj();
     int wolf_count = 0;
 
@@ -44,15 +44,15 @@ bool t_wolf_on_map(Map* test_map) {
             printf("Testing wolf %d at position (%d, %d)\n",
                 wolf_count, wolf->get_x(), wolf->get_y());
 
-            // Тестируем базовые свойства
+            // Г’ГҐГ±ГІГЁГ°ГіГҐГ¬ ГЎГ Г§Г®ГўГ»ГҐ Г±ГўГ®Г©Г±ГІГўГ 
             assert(wolf->get_rang() == 2);
             assert(wolf->get_ag() >= 0 && wolf->get_ag() <= 1);
 
-            // Тестируем метод wanna_eat с КОНКРЕТНОЙ картой
+            // Г’ГҐГ±ГІГЁГ°ГіГҐГ¬ Г¬ГҐГІГ®Г¤ wanna_eat Г± ГЉГЋГЌГЉГђГ…Г’ГЌГЋГ‰ ГЄГ Г°ГІГ®Г©
             bool eat_result = wolf->wanna_eat(test_map);
             printf("Wolf wanna_eat result: %s\n", eat_result ? "true" : "false");
 
-            // Тестируем обновление агрессии
+            // Г’ГҐГ±ГІГЁГ°ГіГҐГ¬ Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ Г ГЈГ°ГҐГ±Г±ГЁГЁ
             double old_agg = wolf->get_ag();
             wolf->update_agg();
             assert(wolf->get_ag() >= 0 && wolf->get_ag() <= 1);
