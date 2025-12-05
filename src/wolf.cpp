@@ -17,7 +17,7 @@ double Wolf::get_ag() const {
 	return agger;
 }
 
-bool Wolf::wanna_eat(Map* map) { //åäèì òîëüêî, åñëè äîñòàòî÷íî ãîëîäíûå 
+bool Wolf::wanna_eat(Map* map) { //Ã¥Ã¤Ã¨Ã¬ Ã²Ã®Ã«Ã¼ÃªÃ®, Ã¥Ã±Ã«Ã¨ Ã¤Ã®Ã±Ã²Ã Ã²Ã®Ã·Ã­Ã® Ã£Ã®Ã«Ã®Ã¤Ã­Ã»Ã¥ 
 	if (agger > CRIT_AGG) {
 		return eat(map);
 	}
