@@ -12,7 +12,7 @@
 int main() {
     printf("=== COMPLETE ECOSYSTEM SIMULATION TESTS ===\n");
 
-    // 1. Тесты базовых объектов
+    // 1. Г’ГҐГ±ГІГ» ГЎГ Г§Г®ГўГ»Гµ Г®ГЎГєГҐГЄГІГ®Гў
     printf("\n1. Basic object tests:\n");
     t_create_mapobj();
     t_mapobj_movement();
@@ -22,7 +22,7 @@ int main() {
     t_mapobj_is_alive();
     t_mapobj_chase_target();
 
-    // 2. Тесты конкретных классов
+    // 2. Г’ГҐГ±ГІГ» ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Гµ ГЄГ«Г Г±Г±Г®Гў
     printf("\n2. Specific class tests:\n");
     t_create_wolf();
     t_update_agg();
@@ -30,17 +30,17 @@ int main() {
     t_create_cole();
     t_map_game_over();
 
-    // 3. Тесты карты
+    // 3. Г’ГҐГ±ГІГ» ГЄГ Г°ГІГ»
     printf("\n3. Map tests:\n");
     t_create_map();
     t_map_get_objects();
     t_map_kill_objects();
     t_map_make_step();
 
-    // 4. Комплексные тесты на конкретной карте
+    // 4. ГЉГ®Г¬ГЇГ«ГҐГЄГ±Г­Г»ГҐ ГІГҐГ±ГІГ» Г­Г  ГЄГ®Г­ГЄГ°ГҐГІГ­Г®Г© ГЄГ Г°ГІГҐ
     printf("\n4. Comprehensive tests on specific map:\n");
 
-    Map* test_map = new Map(2, 3, 2); // 2 волка, 3 зайца, 2 капусты
+    Map* test_map = new Map(2, 3, 2); // 2 ГўГ®Г«ГЄГ , 3 Г§Г Г©Г¶Г , 2 ГЄГ ГЇГіГ±ГІГ»
 
     printf("\n--- Comprehensive MapObj tests ---\n");
     t_mapobj_comprehensive(test_map);
