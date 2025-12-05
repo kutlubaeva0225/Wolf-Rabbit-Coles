@@ -12,6 +12,6 @@ bool Cole::can_be_moved() const {
 	return false;
 };
 bool Cole::give_s(int ds) {
-	stamina += COLE_P_S; //подкармливаем за COLE_P_S 
+	stamina += COLE_P_S; //ГЇГ®Г¤ГЄГ Г°Г¬Г«ГЁГўГ ГҐГ¬ Г§Г  COLE_P_S 
 	return true;
 };
