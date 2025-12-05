@@ -43,7 +43,7 @@ bool MapObj::give_s(int ds) {
 
 }
 MapObj* MapObj::find_targ(int i, Map* m) {
-	// Базовые проверки
+	// ГЃГ Г§Г®ГўГ»ГҐ ГЇГ°Г®ГўГҐГ°ГЄГЁ
 	if (!can_be_moved() || m == nullptr) {
 		return nullptr;
 	}
@@ -52,31 +52,31 @@ MapObj* MapObj::find_targ(int i, Map* m) {
 	else if (i == 1) r = R_DRAP;
 	else return nullptr;
 
-	// Перебор всех объектов на карте
+	// ГЏГҐГ°ГҐГЎГ®Г° ГўГ±ГҐГµ Г®ГЎГєГҐГЄГІГ®Гў Г­Г  ГЄГ Г°ГІГҐ
 	for (MapObj* target : m->get_obj()) {
 
-		// 1. Не проверяем сами себя
+		// 1. ГЌГҐ ГЇГ°Г®ГўГҐГ°ГїГҐГ¬ Г±Г Г¬ГЁ Г±ГҐГЎГї
 		if (target == this) continue;
 
-		// 2. Проверка ранга (строго на 1 меньше нашего)
+		// 2. ГЏГ°Г®ГўГҐГ°ГЄГ  Г°Г Г­ГЈГ  (Г±ГІГ°Г®ГЈГ® Г­Г  1 Г¬ГҐГ­ГјГёГҐ Г­Г ГёГҐГЈГ®)
 		if (this->get_rang() - target->get_rang() == 1) {
 
-			// Расчет координат
+			// ГђГ Г±Г·ГҐГІ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІ
 			int dx = abs(target->get_x() - x);
 			int dy = abs(target->get_y() - y);
 
-			// Учет "круглого мира" (Тор)
+			// Г“Г·ГҐГІ "ГЄГ°ГіГЈГ«Г®ГЈГ® Г¬ГЁГ°Г " (Г’Г®Г°)
 			if (dx > MAX_COOR / 2) dx = MAX_COOR - dx;
 			if (dy > MAX_COOR / 2) dy = MAX_COOR - dy;
 
 			int distance = dx + dy;
 
-			// 3. Проверка дистанции
+			// 3. ГЏГ°Г®ГўГҐГ°ГЄГ  Г¤ГЁГ±ГІГ Г­Г¶ГЁГЁ
 			if (distance <= r) {
 				//printf("Me %d with the pos (%d, %d) found target %d at the pos (%d, %d) to %d\n",this->get_rang(), this->get_x(), this->get_y(), target->get_rang(), target->get_x(), target->get_y(), i);
-				return target; // Нашли цель — сразу возвращаем её
+				return target; // ГЌГ ГёГ«ГЁ Г¶ГҐГ«Гј вЂ” Г±Г°Г Г§Гі ГўГ®Г§ГўГ°Г Г№Г ГҐГ¬ ГҐВё
 			}
-			// Если далеко — просто идем дальше по циклу (continue не обязателен, т.к. конец блока)
+			// Г…Г±Г«ГЁ Г¤Г Г«ГҐГЄГ® вЂ” ГЇГ°Г®Г±ГІГ® ГЁГ¤ГҐГ¬ Г¤Г Г«ГјГёГҐ ГЇГ® Г¶ГЁГЄГ«Гі (continue Г­ГҐ Г®ГЎГїГ§Г ГІГҐГ«ГҐГ­, ГІ.ГЄ. ГЄГ®Г­ГҐГ¶ ГЎГ«Г®ГЄГ )
 		}
 
 	}
@@ -86,23 +86,23 @@ MapObj* MapObj::find_targ(int i, Map* m) {
 
 bool MapObj::chase_targ(MapObj* target, Map* m) {
 	if (!can_be_moved() || target == nullptr || m == nullptr) {
-		return false; //капуста никого не ловит
+		return false; //ГЄГ ГЇГіГ±ГІГ  Г­ГЁГЄГ®ГЈГ® Г­ГҐ Г«Г®ГўГЁГІ
 	}
 
 	int dx = target->get_x() - x;
 	int dy = target->get_y() - y;
 
-	if (dx > MAX_COOR / 2) dx -= MAX_COOR; //отриц заначение dx движение влево, если короче слева - зайдем слева
-	else if (dx < -MAX_COOR / 2) dx += MAX_COOR;  // если справа ближе - пойдем справа
+	if (dx > MAX_COOR / 2) dx -= MAX_COOR; //Г®ГІГ°ГЁГ¶ Г§Г Г­Г Г·ГҐГ­ГЁГҐ dx Г¤ГўГЁГ¦ГҐГ­ГЁГҐ ГўГ«ГҐГўГ®, ГҐГ±Г«ГЁ ГЄГ®Г°Г®Г·ГҐ Г±Г«ГҐГўГ  - Г§Г Г©Г¤ГҐГ¬ Г±Г«ГҐГўГ 
+	else if (dx < -MAX_COOR / 2) dx += MAX_COOR;  // ГҐГ±Г«ГЁ Г±ГЇГ°Г ГўГ  ГЎГ«ГЁГ¦ГҐ - ГЇГ®Г©Г¤ГҐГ¬ Г±ГЇГ°Г ГўГ 
 
-	if (dy > MAX_COOR / 2) dy -= MAX_COOR; //отриц заначение dx движение вниз, если короче слева - зайдем снизу
-	else if (dy < -MAX_COOR / 2) dy += MAX_COOR; // если сверху ближе - пойдем сверху
+	if (dy > MAX_COOR / 2) dy -= MAX_COOR; //Г®ГІГ°ГЁГ¶ Г§Г Г­Г Г·ГҐГ­ГЁГҐ dx Г¤ГўГЁГ¦ГҐГ­ГЁГҐ ГўГ­ГЁГ§, ГҐГ±Г«ГЁ ГЄГ®Г°Г®Г·ГҐ Г±Г«ГҐГўГ  - Г§Г Г©Г¤ГҐГ¬ Г±Г­ГЁГ§Гі
+	else if (dy < -MAX_COOR / 2) dy += MAX_COOR; // ГҐГ±Г«ГЁ Г±ГўГҐГ°ГµГі ГЎГ«ГЁГ¦ГҐ - ГЇГ®Г©Г¤ГҐГ¬ Г±ГўГҐГ°ГµГі
 
-	// Движение только на один шаг к цели
+	// Г„ГўГЁГ¦ГҐГ­ГЁГҐ ГІГ®Г«ГјГЄГ® Г­Г  Г®Г¤ГЁГ­ ГёГ ГЈ ГЄ Г¶ГҐГ«ГЁ
 	if (dx != 0) dx = (dx > 0) ? 1 : -1;
 	if (dy != 0) dy = (dy > 0) ? 1 : -1;
 
-	return move_on(dx, dy, m, true);  //двигаемя пропуская фазу преследования
+	return move_on(dx, dy, m, true);  //Г¤ГўГЁГЈГ ГҐГ¬Гї ГЇГ°Г®ГЇГіГ±ГЄГ Гї ГґГ Г§Гі ГЇГ°ГҐГ±Г«ГҐГ¤Г®ГўГ Г­ГЁГї
 }
 
 
@@ -110,7 +110,7 @@ bool MapObj::eat(Map* m) {
 	if (m == nullptr) return false;
 	MapObj* target = find_targ(1, m);
 	if (!can_be_moved() || target == nullptr) {
-		return false; //капуста никого не ест
+		return false; //ГЄГ ГЇГіГ±ГІГ  Г­ГЁГЄГ®ГЈГ® Г­ГҐ ГҐГ±ГІ
 	}
 	//printf("the target %d  at position (%d, %d), was killed\n", target->get_rang(), target->get_x(), target->get_y());
 	m->kill(target);
@@ -122,44 +122,44 @@ bool MapObj::move_on(int dx, int dy, Map* m, bool skip_chase_logic = true) {
 	if (m == nullptr) return false;
 	if (!can_be_moved()) return false;
 
-	// Ограничиваем дальность хода
+	// ГЋГЈГ°Г Г­ГЁГ·ГЁГўГ ГҐГ¬ Г¤Г Г«ГјГ­Г®Г±ГІГј ГµГ®Г¤Г 
 	if (dx > MAX_SHIFT) dx = MAX_SHIFT;
 	else if (dx < -MAX_SHIFT) dx = -MAX_SHIFT;
 
 	if (dy > MAX_SHIFT) dy = MAX_SHIFT;
 	else if (dy < -MAX_SHIFT) dy = -MAX_SHIFT;
 
-	// --- ИСПРАВЛЕНИЕ 1: Логика преследования ---
-	// В chase_targ вы вызываете move_on с false, а тут проверяете !nskip. 
-	// Это вызывало бы бесконечный цикл.
-	// Здесь мы проверяем: если мы НЕ в режиме выполнения погони (skip_chase_logic == false), 
-	// то ищем цель.
+	// --- Г€Г‘ГЏГђГЂГ‚Г‹Г…ГЌГ€Г… 1: Г‹Г®ГЈГЁГЄГ  ГЇГ°ГҐГ±Г«ГҐГ¤Г®ГўГ Г­ГЁГї ---
+	// Г‚ chase_targ ГўГ» ГўГ»Г§Г»ГўГ ГҐГІГҐ move_on Г± false, Г  ГІГіГІ ГЇГ°Г®ГўГҐГ°ГїГҐГІГҐ !nskip. 
+	// ГќГІГ® ГўГ»Г§Г»ГўГ Г«Г® ГЎГ» ГЎГҐГ±ГЄГ®Г­ГҐГ·Г­Г»Г© Г¶ГЁГЄГ«.
+	// Г‡Г¤ГҐГ±Гј Г¬Г» ГЇГ°Г®ГўГҐГ°ГїГҐГ¬: ГҐГ±Г«ГЁ Г¬Г» ГЌГ… Гў Г°ГҐГ¦ГЁГ¬ГҐ ГўГ»ГЇГ®Г«Г­ГҐГ­ГЁГї ГЇГ®ГЈГ®Г­ГЁ (skip_chase_logic == false), 
+	// ГІГ® ГЁГ№ГҐГ¬ Г¶ГҐГ«Гј.
 	if (!skip_chase_logic && find_targ(0, m) != nullptr) {
 		return chase_targ(find_targ(0, m), m);
 	}
 
-	// Рассчитываем новые координаты
+	// ГђГ Г±Г±Г·ГЁГІГ»ГўГ ГҐГ¬ Г­Г®ГўГ»ГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ»
 	int new_x = x + dx;
 	int new_y = y + dy;
 
-	// Размер карты (если координаты 0..15, то размер 16)
+	// ГђГ Г§Г¬ГҐГ° ГЄГ Г°ГІГ» (ГҐГ±Г«ГЁ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ» 0..15, ГІГ® Г°Г Г§Г¬ГҐГ° 16)
 	int map_size = MAX_COOR + 1;
 
-	// --- ИСПРАВЛЕНИЕ 2: Правильный Тор (зацикливание) ---
-	// Ваша старая формула сдвигала клетки неправильно при переходе через 0
+	// --- Г€Г‘ГЏГђГЂГ‚Г‹Г…ГЌГ€Г… 2: ГЏГ°Г ГўГЁГ«ГјГ­Г»Г© Г’Г®Г° (Г§Г Г¶ГЁГЄГ«ГЁГўГ Г­ГЁГҐ) ---
+	// Г‚Г ГёГ  Г±ГІГ Г°Г Гї ГґГ®Г°Г¬ГіГ«Г  Г±Г¤ГўГЁГЈГ Г«Г  ГЄГ«ГҐГІГЄГЁ Г­ГҐГЇГ°Г ГўГЁГ«ГјГ­Г® ГЇГ°ГЁ ГЇГҐГ°ГҐГµГ®Г¤ГҐ Г·ГҐГ°ГҐГ§ 0
 	if (new_x < 0) new_x += map_size;
 	else if (new_x > MAX_COOR) new_x -= map_size;
 
 	if (new_y < 0) new_y += map_size;
 	else if (new_y > MAX_COOR) new_y -= map_size;
 
-	// --- ИСПРАВЛЕНИЕ 3 (ГЛАВНОЕ): Расчет стамины ---
-	// Считаем расход по РЕАЛЬНО пройденному пути (dx, dy), а не по скачку координат
+	// --- Г€Г‘ГЏГђГЂГ‚Г‹Г…ГЌГ€Г… 3 (ГѓГ‹ГЂГ‚ГЌГЋГ…): ГђГ Г±Г·ГҐГІ Г±ГІГ Г¬ГЁГ­Г» ---
+	// Г‘Г·ГЁГІГ ГҐГ¬ Г°Г Г±ГµГ®Г¤ ГЇГ® ГђГ…ГЂГ‹ГњГЌГЋ ГЇГ°Г®Г©Г¤ГҐГ­Г­Г®Г¬Гі ГЇГіГІГЁ (dx, dy), Г  Г­ГҐ ГЇГ® Г±ГЄГ Г·ГЄГі ГЄГ®Г®Г°Г¤ГЁГ­Г ГІ
 	int cost = (abs(dx) + abs(dy)) * EFFORT;
 	stamina -= cost;
 
 	if (!is_alive()) {
-		m->kill(this); // Умер от усталости
+		m->kill(this); // Г“Г¬ГҐГ° Г®ГІ ГіГ±ГІГ Г«Г®Г±ГІГЁ
 		return false;
 	}
 
@@ -169,7 +169,7 @@ bool MapObj::move_on(int dx, int dy, Map* m, bool skip_chase_logic = true) {
 }
 
 
-//перевод с Си
+//ГЇГҐГ°ГҐГўГ®Г¤ Г± Г‘ГЁ
 
 extern "C" {
 	int get_s(MapObj* obj) {
@@ -177,25 +177,25 @@ extern "C" {
 	}
 	int give_s(MapObj* obj, int ds) {
 		if (ds + obj->get_s() > MAX_STAMINA || ds + obj->get_s() < 0) {
-			return 1; //ошибка
+			return 1; //Г®ГёГЁГЎГЄГ 
 		}
 		else {
 			obj->give_s(ds);
-			return 0; //успех 
+			return 0; //ГіГ±ГЇГҐГµ 
 		}
 	}
 	int move_on(MapObj* obj, int dx, int dy, Map* m, int mode) {
-		// mode == 1 -> ЛОВИТЬ
-		// mode == 0 -> ПРОСТО ИДТИ (не ловить)
+		// mode == 1 -> Г‹ГЋГ‚Г€Г’Гњ
+		// mode == 0 -> ГЏГђГЋГ‘Г’ГЋ Г€Г„Г’Г€ (Г­ГҐ Г«Г®ГўГЁГІГј)
 
-		if (obj == nullptr || m == nullptr) return 1; //ошибка 
+		if (obj == nullptr || m == nullptr) return 1; //Г®ГёГЁГЎГЄГ  
 
 		if (mode == 1) {
-			// Мы хотим ЛОВИТЬ. Значит, "пропуск погони" должен быть false.
+			// ГЊГ» ГµГ®ГІГЁГ¬ Г‹ГЋГ‚Г€Г’Гњ. Г‡Г­Г Г·ГЁГІ, "ГЇГ°Г®ГЇГіГ±ГЄ ГЇГ®ГЈГ®Г­ГЁ" Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј false.
 			obj->move_on(dx, dy, m, false);
 		}
 		else {
-			// Мы хотим просто идти (НЕ ЛОВИТЬ). Значит, "пропуск погони" должен быть true.
+			// ГЊГ» ГµГ®ГІГЁГ¬ ГЇГ°Г®Г±ГІГ® ГЁГ¤ГІГЁ (ГЌГ… Г‹ГЋГ‚Г€Г’Гњ). Г‡Г­Г Г·ГЁГІ, "ГЇГ°Г®ГЇГіГ±ГЄ ГЇГ®ГЈГ®Г­ГЁ" Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј true.
 			obj->move_on(dx, dy, m, true);
 		}
 
