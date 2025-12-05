@@ -3,27 +3,27 @@
 
 
 
-// Тест создания карты
+// Г’ГҐГ±ГІ Г±Г®Г§Г¤Г Г­ГЁГї ГЄГ Г°ГІГ»
 bool t_create_map() {
-    Map* test_map = new Map(1, 2, 1); // 2 волка, 3 зайца, 2 капусты
+    Map* test_map = new Map(1, 2, 1); // 2 ГўГ®Г«ГЄГ , 3 Г§Г Г©Г¶Г , 2 ГЄГ ГЇГіГ±ГІГ»
 
     assert(test_map != nullptr);
     printf("Map created successfully\n");
 
-    // Проверяем начальное состояние
+    // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г­Г Г·Г Г«ГјГ­Г®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
     test_map->print();
 
     delete test_map;
     return true;
 }
 
-// Тест получения объектов с карты
+// Г’ГҐГ±ГІ ГЇГ®Г«ГіГ·ГҐГ­ГЁГї Г®ГЎГєГҐГЄГІГ®Гў Г± ГЄГ Г°ГІГ»
 bool t_map_get_objects() {
-    Map* test_map = new Map(1, 2, 1); // 1 волк, 2 зайца, 1 капуста
+    Map* test_map = new Map(1, 2, 1); // 1 ГўГ®Г«ГЄ, 2 Г§Г Г©Г¶Г , 1 ГЄГ ГЇГіГ±ГІГ 
 
     std::vector<MapObj*> objects = test_map->get_obj();
 
-    // Проверяем, что получили правильное количество объектов
+    // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬, Г·ГІГ® ГЇГ®Г«ГіГ·ГЁГ«ГЁ ГЇГ°Г ГўГЁГ«ГјГ­Г®ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г®ГЎГєГҐГЄГІГ®Гў
     assert(objects.size() == 4); // 1 + 2 + 1 = 4
 
     int wolf_count = 0, rabbit_count = 0, cole_count = 0;
@@ -49,14 +49,14 @@ bool t_map_get_objects() {
     return true;
 }
 
-// Тест уничтожения объектов на карте
+// Г’ГҐГ±ГІ ГіГ­ГЁГ·ГІГ®Г¦ГҐГ­ГЁГї Г®ГЎГєГҐГЄГІГ®Гў Г­Г  ГЄГ Г°ГІГҐ
 bool t_map_kill_objects() {
-    Map* test_map = new Map(1, 1, 1); // 1 волк, 1 заяц, 1 капуста
+    Map* test_map = new Map(1, 1, 1); // 1 ГўГ®Г«ГЄ, 1 Г§Г ГїГ¶, 1 ГЄГ ГЇГіГ±ГІГ 
 
     std::vector<MapObj*> objects = test_map->get_obj();
     assert(objects.size() == 3);
 
-    // Находим зайца для уничтожения
+    // ГЌГ ГµГ®Г¤ГЁГ¬ Г§Г Г©Г¶Г  Г¤Г«Гї ГіГ­ГЁГ·ГІГ®Г¦ГҐГ­ГЁГї
     MapObj* rabbit_to_kill = nullptr;
     for (MapObj* obj : objects) {
         if (obj->get_rang() == 1) {
@@ -67,10 +67,10 @@ bool t_map_kill_objects() {
 
     assert(rabbit_to_kill != nullptr);
 
-    // Уничтожаем зайца
+    // Г“Г­ГЁГ·ГІГ®Г¦Г ГҐГ¬ Г§Г Г©Г¶Г 
     test_map->kill(rabbit_to_kill);
 
-    // Проверяем, что объект удален
+    // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬, Г·ГІГ® Г®ГЎГєГҐГЄГІ ГіГ¤Г Г«ГҐГ­
     std::vector<MapObj*> objects_after_kill = test_map->get_obj();
     assert(objects_after_kill.size() == 2);
 
@@ -80,7 +80,7 @@ bool t_map_kill_objects() {
     return true;
 }
 
-// Тест шага моделирования
+// Г’ГҐГ±ГІ ГёГ ГЈГ  Г¬Г®Г¤ГҐГ«ГЁГ°Г®ГўГ Г­ГЁГї
 bool t_map_make_step() {
     Map* test_map = create_map(1, 5, 1);
 
@@ -88,7 +88,7 @@ bool t_map_make_step() {
 
     m_print(test_map);
 
-    // Проверяем объекты перед шагом
+    // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г®ГЎГєГҐГЄГІГ» ГЇГҐГ°ГҐГ¤ ГёГ ГЈГ®Г¬
     std::vector<MapObj*> objects = test_map->get_obj();
     printf("Objects before step: %zu\n", objects.size());
     for (size_t i = 0; i < objects.size(); i++) {
@@ -96,7 +96,7 @@ bool t_map_make_step() {
             i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
     }
 
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     make_step(test_map);
 
@@ -111,7 +111,7 @@ bool t_map_make_step() {
     }
 
 
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     test_map->make_step();
 
@@ -126,7 +126,7 @@ bool t_map_make_step() {
     }
 
 
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     make_step(test_map);
 
@@ -139,7 +139,7 @@ bool t_map_make_step() {
         printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
             i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
     }
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     test_map->make_step();
 
@@ -154,13 +154,13 @@ bool t_map_make_step() {
     }
 
 
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     make_step(test_map);
 
     printf("After step:\n");
     m_print(test_map);
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     test_map->make_step();
 
@@ -175,13 +175,13 @@ bool t_map_make_step() {
     }
 
 
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     make_step(test_map);
 
     printf("After step:\n");
     m_print(test_map);
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     test_map->make_step();
 
@@ -196,7 +196,7 @@ bool t_map_make_step() {
     }
 
 
-    // Выполняем шаг
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ ГёГ ГЈ
     printf("Executing step...\n");
     make_step(test_map);
 
@@ -210,25 +210,25 @@ bool t_map_make_step() {
     return true;
 }
 
-// Тест проверки окончания игры
+// Г’ГҐГ±ГІ ГЇГ°Г®ГўГҐГ°ГЄГЁ Г®ГЄГ®Г­Г·Г Г­ГЁГї ГЁГЈГ°Г»
 bool t_map_game_over() {
-    // Тест 1: Не все объекты одного типа
+    // Г’ГҐГ±ГІ 1: ГЌГҐ ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ» Г®Г¤Г­Г®ГЈГ® ГІГЁГЇГ 
     Map* test_map1 = new Map(1, 1, 1);
     bool game_over1 = test_map1->if_game_over();
     assert(game_over1 == false);
     printf("Game with multiple types: %s\n", game_over1 ? "OVER" : "CONTINUE");
 
-    // Тест 2: Только волки
+    // Г’ГҐГ±ГІ 2: Г’Г®Г«ГјГЄГ® ГўГ®Г«ГЄГЁ
     Map* test_map2 = new Map(2, 0, 0);
     bool game_over2 = test_map2->if_game_over();
     printf("Game with only wolves: %s\n", game_over2 ? "OVER" : "CONTINUE");
 
-    // Тест 3: Только зайцы  
+    // Г’ГҐГ±ГІ 3: Г’Г®Г«ГјГЄГ® Г§Г Г©Г¶Г»  
     Map* test_map3 = new Map(0, 2, 0);
     bool game_over3 = test_map3->if_game_over();
     printf("Game with only rabbits: %s\n", game_over3 ? "OVER" : "CONTINUE");
 
-    // Тест 4: Только капуста
+    // Г’ГҐГ±ГІ 4: Г’Г®Г«ГјГЄГ® ГЄГ ГЇГіГ±ГІГ 
     Map* test_map4 = new Map(0, 0, 2);
     bool game_over4 = test_map4->if_game_over();
     printf("Game with only coles: %s\n", game_over4 ? "OVER" : "CONTINUE");
@@ -240,44 +240,44 @@ bool t_map_game_over() {
     return true;
 }
 
-// Комплексный тест всей карты
+// ГЉГ®Г¬ГЇГ«ГҐГЄГ±Г­Г»Г© ГІГҐГ±ГІ ГўГ±ГҐГ© ГЄГ Г°ГІГ»
 bool t_map_comprehensive() {
     printf("=== COMPREHENSIVE MAP TESTS ===\n");
 
-    // Создаем карту
+    // Г‘Г®Г§Г¤Г ГҐГ¬ ГЄГ Г°ГІГі
     Map* test_map = new Map(2, 3, 2);
 
-    // Тест 1: Проверяем начальное состояние
+    // Г’ГҐГ±ГІ 1: ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г­Г Г·Г Г«ГјГ­Г®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
     printf("\n1. Initial state:\n");
     test_map->print();
     std::vector<MapObj*> initial_objects = test_map->get_obj();
     assert(initial_objects.size() == 7); // 2 + 3 + 2
 
-    // Тест 2: Выполняем несколько шагов
+    // Г’ГҐГ±ГІ 2: Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ Г­ГҐГ±ГЄГ®Г«ГјГЄГ® ГёГ ГЈГ®Гў
     printf("\n2. Simulating 5 steps:\n");
     for (int i = 0; i < 5; i++) {
         printf("Step %d:\n", i + 1);
         test_map->make_step();
         test_map->print();
 
-        // Проверяем, что игра не закончилась раньше времени
+        // ГЏГ°Г®ГўГҐГ°ГїГҐГ¬, Г·ГІГ® ГЁГЈГ°Г  Г­ГҐ Г§Г ГЄГ®Г­Г·ГЁГ«Г Г±Гј Г°Г Г­ГјГёГҐ ГўГ°ГҐГ¬ГҐГ­ГЁ
         if (i < 4) {
             assert(test_map->if_game_over() == false);
         }
     }
 
-    // Тест 3: Уничтожаем несколько объектов
+    // Г’ГҐГ±ГІ 3: Г“Г­ГЁГ·ГІГ®Г¦Г ГҐГ¬ Г­ГҐГ±ГЄГ®Г«ГјГЄГ® Г®ГЎГєГҐГЄГІГ®Гў
     printf("\n3. Testing object destruction:\n");
     std::vector<MapObj*> objects_before_kill = test_map->get_obj();
     if (objects_before_kill.size() > 2) {
-        // Уничтожаем первый объект
+        // Г“Г­ГЁГ·ГІГ®Г¦Г ГҐГ¬ ГЇГҐГ°ГўГ»Г© Г®ГЎГєГҐГЄГІ
         test_map->kill(objects_before_kill[0]);
         std::vector<MapObj*> objects_after_kill = test_map->get_obj();
         printf("Objects after kill: %zu -> %zu\n",
             objects_before_kill.size(), objects_after_kill.size());
     }
 
-    // Тест 4: Проверяем конечное состояние
+    // Г’ГҐГ±ГІ 4: ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ ГЄГ®Г­ГҐГ·Г­Г®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
     printf("\n4. Final state:\n");
     test_map->print();
     bool final_game_state = test_map->if_game_over();
