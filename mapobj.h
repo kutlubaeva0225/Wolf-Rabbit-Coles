@@ -9,7 +9,7 @@
 #ifndef MAPOBJ_H_
 #define MAPOBJ_H_
 
-#define MAX_N_OBJ 10
+#define MAX_N_OBJ 20
 #define MAX_STAMINA 20
 #define PLUS_S 5 //сколько цель сил даст объекту
 #define EFFORT 1 //затрата сил на перемещение на единицу длинны

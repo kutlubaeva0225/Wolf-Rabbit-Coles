@@ -37,9 +37,11 @@ bool t_map_get_objects() {
         if (obj->get_rang() == 2) wolf_count++;
         else if (obj->get_rang() == 1) rabbit_count++;
         else if (obj->get_rang() == 0) cole_count++;
+        printf("obj stamina is %d\n", obj->get_s());
     }
 
     printf("Objects on map: %d wolves, %d rabbits, %d coles\n", wolf_count, rabbit_count, cole_count);
+
     assert(wolf_count == 1);
     assert(rabbit_count == 2);
     assert(cole_count == 1);
@@ -81,25 +83,127 @@ bool t_map_kill_objects() {
 
 // Тест шага моделирования
 bool t_map_make_step() {
-    Map* test_map = new Map(1, 1, 1);
+    Map* test_map = create_map(1, 5, 1);
 
     printf("Before step:\n");
-    test_map->print();
+
+    m_print(test_map);
 
     // Проверяем объекты перед шагом
     std::vector<MapObj*> objects = test_map->get_obj();
     printf("Objects before step: %zu\n", objects.size());
     for (size_t i = 0; i < objects.size(); i++) {
-        printf("  Object %zu: type=%d, pos=(%d,%d)\n",
-            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y());
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
     }
+
+    // Выполняем шаг
+    printf("Executing step...\n");
+    make_step(test_map);
+
+    printf("After step:\n");
+    m_print(test_map);
+
+    objects = test_map->get_obj();
+    printf("Objects after step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
+    }
+
 
     // Выполняем шаг
     printf("Executing step...\n");
     test_map->make_step();
 
     printf("After step:\n");
-    test_map->print();
+    m_print(test_map);
+
+    objects = test_map->get_obj();
+    printf("Objects after step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
+    }
+
+
+    // Выполняем шаг
+    printf("Executing step...\n");
+    make_step(test_map);
+
+    printf("After step:\n");
+    m_print(test_map);
+
+    objects = test_map->get_obj();
+    printf("Objects after step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
+    }
+    // Выполняем шаг
+    printf("Executing step...\n");
+    test_map->make_step();
+
+    printf("After step:\n");
+    m_print(test_map);
+
+    objects = test_map->get_obj();
+    printf("Objects after step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
+    }
+
+
+    // Выполняем шаг
+    printf("Executing step...\n");
+    make_step(test_map);
+
+    printf("After step:\n");
+    m_print(test_map);
+    // Выполняем шаг
+    printf("Executing step...\n");
+    test_map->make_step();
+
+    printf("After step:\n");
+    m_print(test_map);
+
+    objects = test_map->get_obj();
+    printf("Objects after step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
+    }
+
+
+    // Выполняем шаг
+    printf("Executing step...\n");
+    make_step(test_map);
+
+    printf("After step:\n");
+    m_print(test_map);
+    // Выполняем шаг
+    printf("Executing step...\n");
+    test_map->make_step();
+
+    printf("After step:\n");
+    m_print(test_map);
+
+    objects = test_map->get_obj();
+    printf("Objects after step: %zu\n", objects.size());
+    for (size_t i = 0; i < objects.size(); i++) {
+        printf("  Object %zu: type=%d, pos=(%d,%d), stam = %d\n",
+            i, objects[i]->get_rang(), objects[i]->get_x(), objects[i]->get_y(), objects[i]->get_s());
+    }
+
+
+    // Выполняем шаг
+    printf("Executing step...\n");
+    make_step(test_map);
+
+    printf("After step:\n");
+    m_print(test_map);
+
 
     printf("Step completed successfully\n");
 

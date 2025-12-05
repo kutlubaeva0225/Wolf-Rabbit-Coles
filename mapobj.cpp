@@ -43,7 +43,8 @@ bool MapObj::give_s(int ds) {
 
 }
 MapObj* MapObj::find_targ(int i, Map* m) {
-	if (!can_be_moved() || m == nullptr) { //капуста никого не ищет 
+	// Базовые проверки
+	if (!can_be_moved() || m == nullptr) {
 		return nullptr;
 	}
 	int r;
@@ -51,22 +52,35 @@ MapObj* MapObj::find_targ(int i, Map* m) {
 	else if (i == 1) r = R_DRAP;
 	else return nullptr;
 
-	for (MapObj* target : m->get_obj()) { //get_obj возвращает всех все объекты карты. Будет брать из контейнера справа. Const, чтобы цель не менять по ссылке
-		if (this->get_rang() - target->get_rang() == 1) { //интеретсны только ниже рангом, но на 1. Волк капусту не ест
+	// Перебор всех объектов на карте
+	for (MapObj* target : m->get_obj()) {
+
+		// 1. Не проверяем сами себя
+		if (target == this) continue;
+
+		// 2. Проверка ранга (строго на 1 меньше нашего)
+		if (this->get_rang() - target->get_rang() == 1) {
+
+			// Расчет координат
 			int dx = abs(target->get_x() - x);
 			int dy = abs(target->get_y() - y);
-			if (dx > MAX_COOR / 2) dx = MAX_COOR - dx; //если расстояние больше чем половина карты, то измеряем с другой стороны
+
+			// Учет "круглого мира" (Тор)
+			if (dx > MAX_COOR / 2) dx = MAX_COOR - dx;
 			if (dy > MAX_COOR / 2) dy = MAX_COOR - dy;
-			int distance = dx + dy; // измеряем расстояние по манх-й норме
+
+			int distance = dx + dy;
+
+			// 3. Проверка дистанции
 			if (distance <= r) {
-				return target;
+				//printf("Me %d with the pos (%d, %d) found target %d at the pos (%d, %d) to %d\n",this->get_rang(), this->get_x(), this->get_y(), target->get_rang(), target->get_x(), target->get_y(), i);
+				return target; // Нашли цель — сразу возвращаем её
 			}
-			else {
-				return nullptr;
-			}
+			// Если далеко — просто идем дальше по циклу (continue не обязателен, т.к. конец блока)
 		}
-		else return nullptr;
+
 	}
+
 	return nullptr;
 }
 
@@ -88,7 +102,7 @@ bool MapObj::chase_targ(MapObj* target, Map* m) {
 	if (dx != 0) dx = (dx > 0) ? 1 : -1;
 	if (dy != 0) dy = (dy > 0) ? 1 : -1;
 
-	return move_on(dx, dy, m, false);  //двигаемя пропуская фазу преследования
+	return move_on(dx, dy, m, true);  //двигаемя пропуская фазу преследования
 }
 
 
@@ -98,19 +112,29 @@ bool MapObj::eat(Map* m) {
 	if (!can_be_moved() || target == nullptr) {
 		return false; //капуста никого не ест
 	}
+	//printf("the target %d  at position (%d, %d), was killed\n", target->get_rang(), target->get_x(), target->get_y());
 	m->kill(target);
 	stamina += PLUS_S;
 	return true;
 }
-bool MapObj::move_on(int dx, int dy, Map* m, bool nskip_chase = true) { //dx, dy предлагаемые параметры перемещения
+
+bool MapObj::move_on(int dx, int dy, Map* m, bool skip_chase_logic = true) {
 	if (m == nullptr) return false;
 	if (!can_be_moved()) return false;
-	if (dx > MAX_SHIFT) dx = MAX_SHIFT; //не можем переместиться дальше, чем можем
-	if (dy > MAX_SHIFT) dy = MAX_SHIFT;
-	if (dx < -MAX_SHIFT) dx = -MAX_SHIFT;
-	if (dy < -MAX_SHIFT) dy = -MAX_SHIFT;
 
-	if (!nskip_chase && find_targ(0, m) != nullptr) { //если заяц по близости есть, будем его преследовать
+	// Ограничиваем дальность хода
+	if (dx > MAX_SHIFT) dx = MAX_SHIFT;
+	else if (dx < -MAX_SHIFT) dx = -MAX_SHIFT;
+
+	if (dy > MAX_SHIFT) dy = MAX_SHIFT;
+	else if (dy < -MAX_SHIFT) dy = -MAX_SHIFT;
+
+	// --- ИСПРАВЛЕНИЕ 1: Логика преследования ---
+	// В chase_targ вы вызываете move_on с false, а тут проверяете !nskip. 
+	// Это вызывало бы бесконечный цикл.
+	// Здесь мы проверяем: если мы НЕ в режиме выполнения погони (skip_chase_logic == false), 
+	// то ищем цель.
+	if (!skip_chase_logic && find_targ(0, m) != nullptr) {
 		return chase_targ(find_targ(0, m), m);
 	}
 
@@ -118,19 +142,27 @@ bool MapObj::move_on(int dx, int dy, Map* m, bool nskip_chase = true) { //dx, dy
 	int new_x = x + dx;
 	int new_y = y + dy;
 
-	// Обрабатываем выход за границы (тор)
-	if (new_x < 0) new_x = MAX_COOR + new_x;
-	else if (new_x > MAX_COOR) new_x = new_x - MAX_COOR - 1; // не пропускаем нулевую клетку
+	// Размер карты (если координаты 0..15, то размер 16)
+	int map_size = MAX_COOR + 1;
 
-	if (new_y < 0) new_y = MAX_COOR + new_y;
-	else if (new_y > MAX_COOR) new_y = new_y - MAX_COOR - 1; // не пропускаем нулевую клетку
+	// --- ИСПРАВЛЕНИЕ 2: Правильный Тор (зацикливание) ---
+	// Ваша старая формула сдвигала клетки неправильно при переходе через 0
+	if (new_x < 0) new_x += map_size;
+	else if (new_x > MAX_COOR) new_x -= map_size;
 
-	// Применяем новые координаты
-	stamina -= (abs(x - new_x) + abs(y - new_y)) * EFFORT;
+	if (new_y < 0) new_y += map_size;
+	else if (new_y > MAX_COOR) new_y -= map_size;
+
+	// --- ИСПРАВЛЕНИЕ 3 (ГЛАВНОЕ): Расчет стамины ---
+	// Считаем расход по РЕАЛЬНО пройденному пути (dx, dy), а не по скачку координат
+	int cost = (abs(dx) + abs(dy)) * EFFORT;
+	stamina -= cost;
+
 	if (!is_alive()) {
-		m->kill(this);
+		m->kill(this); // Умер от усталости
 		return false;
 	}
+
 	x = new_x;
 	y = new_y;
 	return true;
@@ -152,16 +184,22 @@ extern "C" {
 			return 0; //успех 
 		}
 	}
-	int move_on(MapObj* obj, int dx, int dy, Map* m, int skip) { //dx, dy предлагаемые параметры перемещения // skip == 1 - ловить, skip == 0 - не ловить
-		if (skip == 1) {
-			obj->move_on(dx, dy, m, true); //неловим
-			return 0;
-		}
-		else if (skip == 0) {
+	int move_on(MapObj* obj, int dx, int dy, Map* m, int mode) {
+		// mode == 1 -> ЛОВИТЬ
+		// mode == 0 -> ПРОСТО ИДТИ (не ловить)
+
+		if (obj == nullptr || m == nullptr) return 1; //ошибка 
+
+		if (mode == 1) {
+			// Мы хотим ЛОВИТЬ. Значит, "пропуск погони" должен быть false.
 			obj->move_on(dx, dy, m, false);
-			return 0;
 		}
-		else return 1;
+		else {
+			// Мы хотим просто идти (НЕ ЛОВИТЬ). Значит, "пропуск погони" должен быть true.
+			obj->move_on(dx, dy, m, true);
+		}
+
+		return 0;
 	}
 }
 

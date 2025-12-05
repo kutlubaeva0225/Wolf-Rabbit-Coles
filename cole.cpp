@@ -3,6 +3,7 @@
 #include "mapobj.h"
 #include "cole.h"
 
+
 #define COLE_P_S 1
 
 Cole::Cole(int x, int y, int start_s, int rang) : MapObj(x, y, 1, 0) {}

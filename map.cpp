@@ -6,6 +6,8 @@
 #include "wolf.h"
 #include "rabbit.h"
 #include "cole.h"
+#include <cstdlib> 
+#include <algorithm>
 
 
 
@@ -65,45 +67,56 @@ std::vector<MapObj*> Map::get_obj() const {
 	return std::vector<MapObj*>(objects, objects + obj_num); //первыый элемент ... последний 
 }
 
+
+
 void Map::make_step() {
+	// 1. Делаем снимок всех, кто был жив в начале хода
 	std::vector<MapObj*> snapshot = get_obj();
 
 	for (MapObj* obj : snapshot) {
+		// --- ЗАЩИТА ОТ ЗОМБИ ---
+		// Проверяем, существует ли этот указатель в реальном массиве прямо сейчас.
+		// Если его съели пару миллисекунд назад, его там уже не будет.
 
-		// Проверка что объект еще жив
-		bool alive = false;
+		bool is_alive_now = false;
 		for (int i = 0; i < obj_num; i++) {
 			if (objects[i] == obj) {
-				alive = true;
+				is_alive_now = true;
 				break;
 			}
 		}
-		if (!alive) continue;
+
+		// Если объекта нет в списке живых — пропускаем его
+		if (!is_alive_now) continue;
+		// -----------------------
 
 		if (obj->can_be_moved()) {
+			// Двигаем
 			obj->move_on(rand() % MAX_SHIFT, rand() % MAX_SHIFT, this, false);
 
-			// ПОСЛЕ move_on объект МОРАЛЬНО МОЖЕТ БЫТЬ УБИТ
-			alive = false;
+			// --- ПРОВЕРКА 2: Не умер ли он во время движения (от голода)? ---
+			// Если он умер внутри move_on, его указатель уже невалиден,
+			// но нам и не нужно ничего делать, кроме как не вызывать eat.
+
+			bool survived_move = false;
 			for (int i = 0; i < obj_num; i++) {
 				if (objects[i] == obj) {
-					alive = true;
+					survived_move = true;
 					break;
 				}
 			}
-			if (!alive) continue;
+			if (!survived_move) continue;
 
+			// Едим (если выжил)
 			obj->eat(this);
 		}
 		else {
-			obj->give_s(1);
+			obj->give_s(1); // Восстанавливаем силы, если стоит
 		}
 	}
 
 	curr_time++;
 }
-
-
 bool Map::if_game_over() {
 	if (wolfs <= 0 && rabbits <= 0) {
 		printf("Coles have won! Congratulations!\n");
@@ -119,6 +132,13 @@ bool Map::if_game_over() {
 	}
 	else return false;
 }
+struct ExportData {
+	MapObj* obj_ptr; 
+	int type;        // 0=Cole, 1=Rabbit, 2=Wolf
+	int x;
+	int y;
+	int stamina;
+};
 
 extern "C" {
 	Map* create_map(int w, int r, int c) {
@@ -126,7 +146,7 @@ extern "C" {
 	}
 	void del_map(Map* m) {
 		if (m == nullptr) return;
-		m->~Map();
+		delete m;
 	}
 	void m_print(Map* m) {
 		if (m == nullptr) return;
@@ -136,5 +156,35 @@ extern "C" {
 		if (m == nullptr) return 1;
 		m->make_step();
 		return 0;
+	}
+	int if_game_over(Map* m) {
+		if (m == nullptr) return 1;
+		bool b = m->if_game_over();
+		if (b) return 0;
+		else return 1;
+	}
+
+	// Новая функция: заполняет массив данными о всех живых объектах
+	// buffer - массив, который подготовит Python
+	// max_size - максимальный размер массива
+	// Возвращает реальное количество объектов
+	int get_snapshot(Map* m, ExportData* buffer, int max_size) {
+		if (m == nullptr) return 0;
+
+		std::vector<MapObj*> objs = m->get_obj(); // Получаем вектор
+		int count = 0;
+
+		for (MapObj* obj : objs) {
+			if (count >= max_size) break; // Защита от переполнения
+
+			buffer[count].obj_ptr = obj;
+			buffer[count].type = obj->get_rang(); 
+			buffer[count].x = obj->get_x();
+			buffer[count].y = obj->get_y();
+			buffer[count].stamina = obj->get_s();
+
+			count++;
+		}
+		return count;
 	}
 }
