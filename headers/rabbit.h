@@ -8,6 +8,6 @@
 
 class Rabbit : public MapObj {
 public:
-	Rabbit(int x, int y, int start_s, int rang); //конструктор зайца
+	Rabbit(int x, int y, int start_s, int rang); //ГЄГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г§Г Г©Г¶Г 
 };
 #endif
