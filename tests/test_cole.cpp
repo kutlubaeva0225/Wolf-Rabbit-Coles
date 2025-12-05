@@ -5,20 +5,20 @@
 #ifndef TEST_COLE_H_
 #define TEST_COLE_H_
 
-// Òåñò ñîçäàíèÿ êàïóñòû (áåç êàðòû)
+// Å‡ÄºÅ„Åˆ Å„Ã®Ã§Ã¤Å•Ã­ÄË™ Ä™Å•ÄÃ³Å„ÅˆÅ± (Ã¡ÄºÃ§ Ä™Å•Ä‘ÅˆÅ±)
 bool t_create_cole() {
     Cole* cole = new Cole(7, 7, 1, 0);
     assert(cole->get_x() == 7);
     assert(cole->get_y() == 7);
-    assert(cole->get_s() == 1);  // Ó êàïóñòû âñåãäà 1 stamina
+    assert(cole->get_s() == 1);  // Ã“ Ä™Å•ÄÃ³Å„ÅˆÅ± Ã¢Å„ÄºÄƒÃ¤Å• 1 stamina
     assert(cole->get_rang() == 0);
-    assert(cole->can_be_moved() == false);  // Êàïóñòà íå äâèãàåòñÿ
+    assert(cole->can_be_moved() == false);  // Ä˜Å•ÄÃ³Å„ÅˆÅ• Ã­Äº Ã¤Ã¢ÄÄƒÅ•ÄºÅˆÅ„Ë™
     printf("Cole created correctly\n");
     delete cole;
     return true;
 }
 
-// Òåñò ïîâåäåíèÿ êàïóñòû íà ÊÎÍÊÐÅÒÍÎÉ êàðòå
+// Å‡ÄºÅ„Åˆ ÄÃ®Ã¢ÄºÃ¤ÄºÃ­ÄË™ Ä™Å•ÄÃ³Å„ÅˆÅ± Ã­Å• Ä˜ÃŽÃÄ˜ÄÄ¹Å‡ÃÃŽÃ‰ Ä™Å•Ä‘ÅˆÄº
 bool t_cole_on_map(Map* test_map) {
     printf("Testing cole behavior on specific map...\n");
 
@@ -31,33 +31,33 @@ bool t_cole_on_map(Map* test_map) {
             printf("Testing cole %d at position (%d, %d)\n",
                 cole_count, cole->get_x(), cole->get_y());
 
-            // Òåñòèðóåì áàçîâûå ñâîéñòâà êàïóñòû
+            // Å‡ÄºÅ„ÅˆÄÄ‘Ã³ÄºÄ› Ã¡Å•Ã§Ã®Ã¢Å±Äº Å„Ã¢Ã®Ã©Å„ÅˆÃ¢Å• Ä™Å•ÄÃ³Å„ÅˆÅ±
             assert(cole->get_rang() == 0);
             assert(cole->get_s() == 1);
             assert(cole->can_be_moved() == false);
 
-            // Òåñòèðóåì, ÷òî êàïóñòà íå ìîæåò åñòü
+            // Å‡ÄºÅ„ÅˆÄÄ‘Ã³ÄºÄ›, Ã·ÅˆÃ® Ä™Å•ÄÃ³Å„ÅˆÅ• Ã­Äº Ä›Ã®Ä‡ÄºÅˆ ÄºÅ„ÅˆÃ¼
             bool eat_result = cole->eat(test_map);
             assert(eat_result == false);
             printf("Cole cannot eat: %s\n", eat_result ? "true" : "false");
 
-            // Òåñòèðóåì, ÷òî êàïóñòà íå ìîæåò äâèãàòüñÿ
+            // Å‡ÄºÅ„ÅˆÄÄ‘Ã³ÄºÄ›, Ã·ÅˆÃ® Ä™Å•ÄÃ³Å„ÅˆÅ• Ã­Äº Ä›Ã®Ä‡ÄºÅˆ Ã¤Ã¢ÄÄƒÅ•ÅˆÃ¼Å„Ë™
             bool move_result = cole->move_on(1, 1, test_map, false);
             assert(move_result == false);
             printf("Cole cannot move: %s\n", move_result ? "true" : "false");
 
-            // Òåñòèðóåì ïîäêàðìëèâàíèå êàïóñòû
+            // Å‡ÄºÅ„ÅˆÄÄ‘Ã³ÄºÄ› ÄÃ®Ã¤Ä™Å•Ä‘Ä›Ã«ÄÃ¢Å•Ã­ÄÄº Ä™Å•ÄÃ³Å„ÅˆÅ±
             int old_stamina = cole->get_s();
             bool feed_result = cole->give_s(1);
             int new_stamina = cole->get_s();
             printf("Cole give_s result: %s, stamina: %d -> %d\n",
                 feed_result ? "true" : "false", old_stamina, new_stamina);
 
-            // Òåñòèðóåì, ÷òî êàïóñòà âñåãäà æèâà (stamina = 1)
+            // Å‡ÄºÅ„ÅˆÄÄ‘Ã³ÄºÄ›, Ã·ÅˆÃ® Ä™Å•ÄÃ³Å„ÅˆÅ• Ã¢Å„ÄºÄƒÃ¤Å• Ä‡ÄÃ¢Å• (stamina = 1)
             assert(cole->is_alive() == true);
             printf("Cole is always alive: %s\n", cole->is_alive() ? "true" : "false");
 
-            // Òåñòèðóåì ïîèñê öåëåé (êàïóñòà íèêîãî íå èùåò)
+            // Å‡ÄºÅ„ÅˆÄÄ‘Ã³ÄºÄ› ÄÃ®ÄÅ„Ä™ Ã¶ÄºÃ«ÄºÃ© (Ä™Å•ÄÃ³Å„ÅˆÅ• Ã­ÄÄ™Ã®ÄƒÃ® Ã­Äº ÄÅ¯ÄºÅˆ)
             MapObj* target = cole->find_targ(0, test_map);
             assert(target == nullptr);
             printf("Cole cannot find targets: %s\n", target ? "true" : "false");
