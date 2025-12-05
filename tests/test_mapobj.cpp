@@ -5,7 +5,7 @@
 #ifndef TEST_MAPOBJ_H_
 #define TEST_MAPOBJ_H_
 
-// Тест создания базового объекта
+// Г’ГҐГ±ГІ Г±Г®Г§Г¤Г Г­ГЁГї ГЎГ Г§Г®ГўГ®ГЈГ® Г®ГЎГєГҐГЄГІГ 
 bool t_create_mapobj() {
     MapObj* obj = new MapObj(5, 5, START_S, 1);
     assert(obj->get_x() == 5);
@@ -19,34 +19,34 @@ bool t_create_mapobj() {
     return true;
 }
 
-// Тест движения объекта
+// Г’ГҐГ±ГІ Г¤ГўГЁГ¦ГҐГ­ГЁГї Г®ГЎГєГҐГЄГІГ 
 bool t_mapobj_movement() {
-    Map* test_map = new Map(0, 1, 0); // Только 1 объект для теста движения
+    Map* test_map = new Map(0, 1, 0); // Г’Г®Г«ГјГЄГ® 1 Г®ГЎГєГҐГЄГІ Г¤Г«Гї ГІГҐГ±ГІГ  Г¤ГўГЁГ¦ГҐГ­ГЁГї
     MapObj* obj = new MapObj(5, 5, START_S, 1);
 
     int old_x = obj->get_x();
     int old_y = obj->get_y();
     int old_stamina = obj->get_s();
 
-    // Тестируем движение
+    // Г’ГҐГ±ГІГЁГ°ГіГҐГ¬ Г¤ГўГЁГ¦ГҐГ­ГЁГҐ
     bool move_result = obj->move_on(2, 1, test_map, false);
     printf("MapObj moved from (%d,%d) to (%d,%d), stamina: %d -> %d\n",
         old_x, old_y, obj->get_x(), obj->get_y(), old_stamina, obj->get_s());
 
     assert(move_result == true || move_result == false);
-    assert(obj->get_s() <= old_stamina); // Стамина должна уменьшиться
+    assert(obj->get_s() <= old_stamina); // Г‘ГІГ Г¬ГЁГ­Г  Г¤Г®Г«Г¦Г­Г  ГіГ¬ГҐГ­ГјГёГЁГІГјГ±Гї
 
     delete obj;
     delete test_map;
     return true;
 }
 
-// Тест поиска цели
+// Г’ГҐГ±ГІ ГЇГ®ГЁГ±ГЄГ  Г¶ГҐГ«ГЁ
 bool t_mapobj_find_target() {
-    // Создаем карту с объектами разных рангов
-    Map* test_map = new Map(1, 1, 1); // Волк, заяц, капуста
+    // Г‘Г®Г§Г¤Г ГҐГ¬ ГЄГ Г°ГІГі Г± Г®ГЎГєГҐГЄГІГ Г¬ГЁ Г°Г Г§Г­Г»Гµ Г°Г Г­ГЈГ®Гў
+    Map* test_map = new Map(1, 1, 1); // Г‚Г®Г«ГЄ, Г§Г ГїГ¶, ГЄГ ГЇГіГ±ГІГ 
 
-    // Находим волка на карте
+    // ГЌГ ГµГ®Г¤ГЁГ¬ ГўГ®Г«ГЄГ  Г­Г  ГЄГ Г°ГІГҐ
     MapObj* wolf = nullptr;
     std::vector<MapObj*> objects = test_map->get_obj();
     for (MapObj* obj : objects) {
@@ -57,12 +57,12 @@ bool t_mapobj_find_target() {
     }
 
     if (wolf) {
-        // Волк должен найти зайца (ранг 2-1=1)
+        // Г‚Г®Г«ГЄ Г¤Г®Г«Г¦ГҐГ­ Г­Г Г©ГІГЁ Г§Г Г©Г¶Г  (Г°Г Г­ГЈ 2-1=1)
         MapObj* target = wolf->find_targ(0, test_map);
         if (target) {
             printf("Wolf found target with rang %d at (%d,%d)\n",
                 target->get_rang(), target->get_x(), target->get_y());
-            assert(target->get_rang() == 1); // Должен найти зайца
+            assert(target->get_rang() == 1); // Г„Г®Г«Г¦ГҐГ­ Г­Г Г©ГІГЁ Г§Г Г©Г¶Г 
         }
     }
 
@@ -70,9 +70,9 @@ bool t_mapobj_find_target() {
     return true;
 }
 
-// Тест поедания
+// Г’ГҐГ±ГІ ГЇГ®ГҐГ¤Г Г­ГЁГї
 bool t_mapobj_eat() {
-    Map* test_map = new Map(0, 1, 1); // Заяц и капуста
+    Map* test_map = new Map(0, 1, 1); // Г‡Г ГїГ¶ ГЁ ГЄГ ГЇГіГ±ГІГ 
     MapObj* rabbit = nullptr;
 
     std::vector<MapObj*> objects = test_map->get_obj();
@@ -89,7 +89,7 @@ bool t_mapobj_eat() {
         printf("Rabbit eat result: %s, stamina: %d -> %d\n",
             eat_result ? "true" : "false", old_stamina, rabbit->get_s());
 
-        // Если нашел капусту - стамина должна увеличиться
+        // Г…Г±Г«ГЁ Г­Г ГёГҐГ« ГЄГ ГЇГіГ±ГІГі - Г±ГІГ Г¬ГЁГ­Г  Г¤Г®Г«Г¦Г­Г  ГіГўГҐГ«ГЁГ·ГЁГІГјГ±Гї
         if (eat_result) {
             assert(rabbit->get_s() > old_stamina);
         }
@@ -100,7 +100,7 @@ bool t_mapobj_eat() {
 }
 
 
-// Тест подкармливания
+// Г’ГҐГ±ГІ ГЇГ®Г¤ГЄГ Г°Г¬Г«ГЁГўГ Г­ГЁГї
 bool t_mapobj_give_s() {
     MapObj* obj = new MapObj(5, 5, 10, 1);
 
@@ -115,7 +115,7 @@ bool t_mapobj_give_s() {
     return true;
 }
 
-// Тест проверки живучести
+// Г’ГҐГ±ГІ ГЇГ°Г®ГўГҐГ°ГЄГЁ Г¦ГЁГўГіГ·ГҐГ±ГІГЁ
 bool t_mapobj_is_alive() {
     MapObj* alive_obj = new MapObj(5, 5, 5, 1);
     MapObj* dead_obj = new MapObj(5, 5, 0, 1);
@@ -132,9 +132,9 @@ bool t_mapobj_is_alive() {
     return true;
 }
 
-// Тест преследования цели
+// Г’ГҐГ±ГІ ГЇГ°ГҐГ±Г«ГҐГ¤Г®ГўГ Г­ГЁГї Г¶ГҐГ«ГЁ
 bool t_mapobj_chase_target() {
-    Map* test_map = new Map(1, 1, 0); // Волк и заяц
+    Map* test_map = new Map(1, 1, 0); // Г‚Г®Г«ГЄ ГЁ Г§Г ГїГ¶
 
     MapObj* wolf = nullptr;
     MapObj* rabbit = nullptr;
@@ -161,7 +161,7 @@ bool t_mapobj_chase_target() {
     return true;
 }
 
-// Комплексный тест всех методов MapObj на КОНКРЕТНОЙ карте
+// ГЉГ®Г¬ГЇГ«ГҐГЄГ±Г­Г»Г© ГІГҐГ±ГІ ГўГ±ГҐГµ Г¬ГҐГІГ®Г¤Г®Гў MapObj Г­Г  ГЉГЋГЌГЉГђГ…Г’ГЌГЋГ‰ ГЄГ Г°ГІГҐ
 bool t_mapobj_comprehensive(Map* test_map) {
     printf("Comprehensive MapObj tests on specific map...\n");
 
@@ -173,25 +173,25 @@ bool t_mapobj_comprehensive(Map* test_map) {
         printf("\nTesting object %d (rang %d) at (%d,%d):\n",
             tested_objects, obj->get_rang(), obj->get_x(), obj->get_y());
 
-        // Тест базовых свойств
+        // Г’ГҐГ±ГІ ГЎГ Г§Г®ГўГ»Гµ Г±ГўГ®Г©Г±ГІГў
         assert(obj->get_x() >= 0 && obj->get_x() <= MAX_COOR);
         assert(obj->get_y() >= 0 && obj->get_y() <= MAX_COOR);
         assert(obj->get_rang() >= 0 && obj->get_rang() <= 2);
 
-        // Тест движения (только для подвижных объектов)
+        // Г’ГҐГ±ГІ Г¤ГўГЁГ¦ГҐГ­ГЁГї (ГІГ®Г«ГјГЄГ® Г¤Г«Гї ГЇГ®Г¤ГўГЁГ¦Г­Г»Гµ Г®ГЎГєГҐГЄГІГ®Гў)
         if (obj->can_be_moved()) {
             bool move_result = obj->move_on(1, 0, test_map, false);
             printf("  Move result: %s\n", move_result ? "true" : "false");
         }
 
-        // Тест поиска целей
+        // Г’ГҐГ±ГІ ГЇГ®ГЁГ±ГЄГ  Г¶ГҐГ«ГҐГ©
         MapObj* target = obj->find_targ(0, test_map);
         if (target) {
             printf("  Found target at (%d,%d) rang %d\n",
                 target->get_x(), target->get_y(), target->get_rang());
         }
 
-        // Тест живучести
+        // Г’ГҐГ±ГІ Г¦ГЁГўГіГ·ГҐГ±ГІГЁ
         printf("  Is alive: %s, Stamina: %d\n",
             obj->is_alive() ? "true" : "false", obj->get_s());
     }
